@@ -63,8 +63,7 @@
   <div class="mt-5">
     <p class="extra-large-text">Course Name: <span id="displayCourseName"></span></p>
     <p class="extra-large-text">Course Code: <span id="displayCourseCode"></span></p>
-    <p class="extra-large-text highlight" id="readingTimeDisplay" style="display:none;">Reading Time Left: <span id="readingTimeLeft">00m 00s</span></p>
-    <p class="extra-large-text highlight" id="examTimeDisplay" style="display:none;">Exam Time Left: <span id="examTimeLeft">00m 00s</span></p>
+    <p class="extra-large-text highlight" id="examTimeDisplay">Exam Time Left: <span id="examTimeLeft">00m 00s</span></p>
   </div>
 </div>
 
@@ -87,29 +86,18 @@
     document.querySelector('.container').style.display = 'none';
     document.getElementById('countdownDisplay').style.display = 'block';
 
-    let remainingTime = readingTime;
+    let remainingTime = readingTime + examTime;
     const alertSound = document.getElementById('alertSound');
 
-    document.getElementById('readingTimeDisplay').style.display = 'block';
     const countdownInterval = setInterval(() => {
       if (remainingTime <= 0) {
-        if (readingTime > 0) {
-          readingTime = 0;
-          remainingTime = examTime;
-          document.getElementById('readingTimeDisplay').style.display = 'none';
-          document.getElementById('examTimeDisplay').style.display = 'block';
-        } else {
-          clearInterval(countdownInterval);
-          document.getElementById('examTimeLeft').textContent = 'Time is up!';
-          alertSound.play();
-        }
+        clearInterval(countdownInterval);
+        document.getElementById('examTimeLeft').textContent = 'Time is up!';
+        alertSound.play();
       } else {
         remainingTime--;
-        if (readingTime > 0) {
-          document.getElementById('readingTimeLeft').textContent = formatMinutesSeconds(remainingTime);
-        } else {
-          document.getElementById('examTimeLeft').textContent = formatMinutesSeconds(remainingTime);
-        }
+        document.getElementById('examTimeLeft').textContent = formatMinutesSeconds(remainingTime);
+
         if (remainingTime === 3600 || remainingTime === 1800 || remainingTime === 600) {
           alertSound.play();
         }
