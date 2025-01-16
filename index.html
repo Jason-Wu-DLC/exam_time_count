@@ -17,6 +17,9 @@
       color: red;
       font-weight: bold;
     }
+    .large-text {
+      font-size: 3rem;
+    }
   </style>
 </head>
 <body>
@@ -48,10 +51,7 @@
           </form>
           <hr>
           <div id="countdownSection" style="display:none;">
-            <p class="h5">Course Name: <span id="displayCourseName"></span></p>
-            <p class="h5">Course Code: <span id="displayCourseCode"></span></p>
-            <p class="h5">Reading Time Left: <span id="readingCountdown" class="highlight"></span></p>
-            <p class="h5">Exam Time Left: <span id="examCountdown" class="highlight"></span></p>
+            <p class="large-text highlight" id="timeLeft">Time Left: 00m 00s</p>
           </div>
         </div>
       </div>
@@ -63,47 +63,30 @@
 
 <script>
   document.getElementById('startButton').addEventListener('click', function () {
-    const courseName = document.getElementById('courseName').value;
-    const courseCode = document.getElementById('courseCode').value;
     const readingTime = parseInt(document.getElementById('readingTime').value) * 60; // Convert to seconds
     const examTime = parseInt(document.getElementById('examTime').value) * 60; // Convert to seconds
 
-    if (!courseName || !courseCode || isNaN(readingTime) || isNaN(examTime)) {
+    if (isNaN(readingTime) || isNaN(examTime)) {
       alert('Please fill out all fields correctly.');
       return;
     }
 
-    document.getElementById('displayCourseName').textContent = courseName;
-    document.getElementById('displayCourseCode').textContent = courseCode;
-
-    let readingCountdown = readingTime;
-    let examCountdown = examTime;
+    let totalCountdown = readingTime + examTime;
     const alertSound = document.getElementById('alertSound');
-
     document.getElementById('countdownSection').style.display = 'block';
 
-    const readingInterval = setInterval(() => {
-      if (readingCountdown <= 0) {
-        clearInterval(readingInterval);
-        document.getElementById('readingCountdown').textContent = 'Time is up!';
-
-        const examInterval = setInterval(() => {
-          if (examCountdown <= 0) {
-            clearInterval(examInterval);
-            document.getElementById('examCountdown').textContent = 'Time is up!';
-            alertSound.play();
-          } else {
-            examCountdown--;
-            document.getElementById('examCountdown').textContent = formatMinutesSeconds(examCountdown);
-
-            if (examCountdown === 3600 || examCountdown === 1800 || examCountdown === 600) {
-              alertSound.play();
-            }
-          }
-        }, 1000);
+    const countdownInterval = setInterval(() => {
+      if (totalCountdown <= 0) {
+        clearInterval(countdownInterval);
+        document.getElementById('timeLeft').textContent = 'Time is up!';
+        alertSound.play();
       } else {
-        readingCountdown--;
-        document.getElementById('readingCountdown').textContent = formatMinutesSeconds(readingCountdown);
+        totalCountdown--;
+        document.getElementById('timeLeft').textContent = `Time Left: ${formatMinutesSeconds(totalCountdown)}`;
+
+        if (totalCountdown === 3600 || totalCountdown === 1800 || totalCountdown === 600) {
+          alertSound.play();
+        }
       }
     }, 1000);
   });
@@ -111,7 +94,7 @@
   function formatMinutesSeconds(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes}m ${secs}s`;
+    return `${String(minutes).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
   }
 </script>
 
